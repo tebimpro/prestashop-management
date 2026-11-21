@@ -1,0 +1,18 @@
+{
+  "name": "tebim",
+  "owner": {
+    "name": "Tebim sp. z o.o.",
+    "email": "contact@tebim.pro"
+  },
+  "metadata": {
+    "description": "PrestaShop plugins for AI agents by Tebim — tebim.pro"
+  },
+  "plugins": [
+    {
+      "name": "tebim-prestashop-connector",
+      "source": "./",
+      "description": "Control a PrestaShop store from your AI agent via the Webservice API — CRUD, batch changes, audit log and rollback.",
+      "category": "ecommerce"
+    }
+  ]
+}

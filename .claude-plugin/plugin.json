@@ -1,0 +1,27 @@
+{
+  "name": "tebim-prestashop-connector",
+  "description": "Control a PrestaShop store from your AI agent via the Webservice API — CRUD, batch changes, audit log and rollback.",
+  "version": "0.3.0",
+  "author": {
+    "name": "Tebim sp. z o.o.",
+    "email": "contact@tebim.pro",
+    "url": "https://tebim.pro"
+  },
+  "homepage": "https://github.com/tebimpro/prestashop-management",
+  "repository": "https://github.com/tebimpro/prestashop-management",
+  "license": "BSD-2-Clause",
+  "keywords": ["prestashop", "ecommerce", "webservice", "api", "cli", "automation"],
+  "userConfig": {
+    "PRESTASHOP_URL": {
+      "type": "string",
+      "title": "PrestaShop shop URL",
+      "description": "Base URL of the shop, e.g. https://shop.example.com (the /api suffix is added automatically)."
+    },
+    "PRESTASHOP_TOKEN": {
+      "type": "string",
+      "title": "PrestaShop Webservice key",
+      "description": "Webservice API key (Advanced Parameters -> Webservice). Used as the HTTP Basic Auth username.",
+      "sensitive": true
+    }
+  }
+}

@@ -1,0 +1,38 @@
+# © Tebim sp. z o.o. | tebim.pro
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate JSON manifests
+        run: |
+          for f in .claude-plugin/plugin.json .claude-plugin/marketplace.json hooks/hooks.json; do
+            python3 -m json.tool "$f" > /dev/null && echo "ok $f"
+          done
+      - name: ShellCheck
+        run: |
+          shellcheck -S warning \
+            skills/controlling-tebim-prestashop/scripts/psctl \
+            skills/controlling-tebim-prestashop/hooks/*.sh \
+            skills/controlling-tebim-prestashop/tests/*.sh
+
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      # /bin/bash on macOS is 3.2 — the version psctl promises to support.
+      - name: Self-tests
+        run: |
+          /bin/bash --version | head -1
+          /bin/bash skills/controlling-tebim-prestashop/tests/selftest.sh
+          /bin/bash skills/controlling-tebim-prestashop/tests/hook_selftest.sh

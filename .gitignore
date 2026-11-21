@@ -1,0 +1,12 @@
+# © Tebim sp. z o.o. | tebim.pro
+# psctl audit log + snapshots (contain store data)
+.psctl/
+
+# credentials
+.env
+.env.*
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/

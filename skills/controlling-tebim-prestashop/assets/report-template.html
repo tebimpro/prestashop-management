@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<!--
+  © Tebim sp. z o.o. | tebim.pro — BSD-2-Clause
+  PrestaShop change report — Anthropic/Claude-styled template.
+  USE ONLY IN CLAUDE DESKTOP (render as an HTML artifact). In a terminal / Claude
+  Code, use the Markdown report instead (references/operating-policies.md).
+
+  How to fill: replace every {{PLACEHOLDER}}, clone a <tr> per notable record,
+  and set each stat tile's number. Counts come straight from the audit log:
+    updated: grep -c $'\tPUT\t'    .psctl/audit.log
+    created: grep -c $'\tPOST\t'   .psctl/audit.log
+    deleted: grep -c $'\tDELETE\t' .psctl/audit.log
+    failed:  grep -Ec 'HTTP=[45][0-9][0-9]' .psctl/audit.log
+  Keep it self-contained (inline CSS) so it renders as a single artifact.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PrestaShop change report — {{SHOP}}</title>
+<style>
+  :root{
+    --canvas:#FAF9F5; --card:#FFFFFF; --ink:#141413; --muted:#73726C;
+    --border:#E8E6DD; --accent:#D97757; --accent-weak:#F3E6DF;
+    --ok:#4F7A52; --warn:#B5853A; --bad:#B4493C;
+    --radius:14px;
+    --sans:ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --serif:ui-serif,Georgia,"Times New Roman",serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --canvas:#1F1E1D; --card:#262624; --ink:#F5F4EF; --muted:#A6A49C;
+      --border:#3A3936; --accent:#E08A6D; --accent-weak:#3A2E29;
+      --ok:#8FB98F; --warn:#D7B274; --bad:#E08C80;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--canvas);color:var(--ink);font-family:var(--sans);
+       line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:860px;margin:0 auto;padding:48px 24px 72px}
+  header{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px;
+         border-bottom:1px solid var(--border);padding-bottom:20px;margin-bottom:28px}
+  h1{font-family:var(--serif);font-weight:600;font-size:26px;margin:0}
+  .sub{color:var(--muted);font-size:14px}
+  .shop{font-family:var(--mono);font-size:13px;color:var(--accent)}
+  .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:0 0 32px}
+  @media (max-width:620px){.tiles{grid-template-columns:repeat(2,1fr)}}
+  .tile{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
+  .tile .n{font-size:30px;font-weight:600;line-height:1}
+  .tile .l{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-top:8px}
+  .tile.created .n{color:var(--ok)} .tile.deleted .n{color:var(--bad)} .tile.failed .n{color:var(--warn)}
+  h2{font-size:14px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);
+     margin:32px 0 12px;font-weight:600}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:11px 16px;border-bottom:1px solid var(--border)}
+  th{font-size:12px;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  tr:last-child td{border-bottom:none}
+  td.id,td.code{font-family:var(--mono);font-size:13px}
+  .pill{display:inline-block;padding:4px 11px;border-radius:999px;font-size:12px;font-weight:600}
+  .pill.put{background:var(--accent-weak);color:var(--accent)}
+  .pill.post{background:var(--accent-weak);color:var(--ok)}
+  .pill.delete{background:var(--accent-weak);color:var(--bad)}
+  .rollback{margin-top:28px;background:var(--card);border:1px solid var(--border);
+            border-radius:var(--radius);padding:20px 22px}
+  .rollback h2{margin-top:0;color:var(--accent)}
+  code{font-family:var(--mono);font-size:12.5px;background:var(--accent-weak);
+       padding:3px 7px;border-radius:6px}
+  footer{margin-top:40px;color:var(--muted);font-size:12px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>PrestaShop change report</h1>
+      <div class="shop">{{SHOP}}</div>
+    </div>
+    <div class="sub">{{DATE}} · scope: {{SCOPE}}</div>
+  </header>
+
+  <div class="tiles">
+    <div class="tile created"><div class="n">{{CREATED}}</div><div class="l">created</div></div>
+    <div class="tile"><div class="n">{{UPDATED}}</div><div class="l">updated</div></div>
+    <div class="tile deleted"><div class="n">{{DELETED}}</div><div class="l">deleted</div></div>
+    <div class="tile failed"><div class="n">{{FAILED}}</div><div class="l">failed</div></div>
+  </div>
+
+  <h2>Notable records</h2>
+  <div class="card">
+    <table>
+      <thead><tr><th>Action</th><th>Resource</th><th>ID</th><th>HTTP</th><th>Note</th></tr></thead>
+      <tbody>
+        <!-- one <tr> per record worth calling out -->
+        <tr>
+          <td><span class="pill put">PUT</span></td>
+          <td>{{RESOURCE}}</td>
+          <td class="id">{{ID}}</td>
+          <td class="code">{{HTTP}}</td>
+          <td>{{NOTE}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="rollback">
+    <h2>Rollback</h2>
+    <p>Audit log: <code>.psctl/audit.log</code> · snapshots: <code>.psctl/snapshots/</code></p>
+    <p>Restore any record: <code>psctl update {{RESOURCE}} {{ID}} -f .psctl/snapshots/{{SNAPSHOT}}</code></p>
+  </div>
+
+  <footer>Generated by controlling-tebim-prestashop · Tebim</footer>
+</div>
+</body>
+</html>
