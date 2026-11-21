@@ -110,13 +110,13 @@ notable per-record outcomes, and rollback pointers (`.psctl/audit.log` + snapsho
 - **Claude Code / terminal / anywhere else:** plain **Markdown** (template in
   `references/operating-policies.md`). Do **not** emit the HTML style there — it renders as raw tags.
 
-### Learning from long sessions (auto-prompt via plugin hooks)
-A `Stop` hook watches how many mutations a session performed (delta in
-`.psctl/audit.log` vs the `SessionStart` baseline). When it crosses
-`PSCTL_OPTIMIZE_THRESHOLD` (default 10), it prompts **once** to offer the user:
-analyze what this session did and **save a reusable note or script** under
-`./.psctl/notes/` (named after the task) so the same work is faster next time.
-Hook scripts live in the skill's `hooks/`; they are registered in the plugin's root `hooks/hooks.json`.
+### Learning from long sessions
+Before the first mutation in a task, note the baseline:
+`wc -l < .psctl/audit.log` (0 if the file doesn't exist). When the task is done,
+compare again. If this session added **10 or more** mutations (a long, repetitive
+job), offer the user **once**: analyze what was done (see `.psctl/audit.log`) and
+**save a reusable note or script** under `./.psctl/notes/` (named after the task)
+so the same work is faster next time. If the user declines, move on.
 
 ## Reference Files
 
@@ -127,8 +127,7 @@ Hook scripts live in the skill's `hooks/`; they are registered in the plugin's r
 
 ## Verify
 
-`bash tests/selftest.sh` and `bash tests/hook_selftest.sh` run offline checks (no
-network). `scripts/psctl ping` checks a live store.
+`bash tests/selftest.sh` runs offline checks (no network). `scripts/psctl ping` checks a live store.
 
 ## Common Mistakes
 

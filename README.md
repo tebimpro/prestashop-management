@@ -104,13 +104,11 @@ Full API notes: [`references/webservice-api.md`](skills/controlling-tebim-presta
   plugin.json            # plugin manifest (userConfig: URL + sensitive token)
   marketplace.json       # lets this repo act as a Claude Code marketplace
 commands/                # /tebim-prestashop-connect, /tebim-control-prestashop
-hooks/hooks.json         # SessionStart + Stop hooks
 skills/controlling-tebim-prestashop/
   SKILL.md
   scripts/psctl          # the CLI
   references/            # API, key setup, operating policies
   assets/                # HTML report template
-  hooks/                 # hook scripts
   tests/                 # offline self-tests
 ```
 
@@ -118,8 +116,7 @@ skills/controlling-tebim-prestashop/
 
 ```bash
 bash skills/controlling-tebim-prestashop/tests/selftest.sh       # psctl logic, offline
-bash skills/controlling-tebim-prestashop/tests/hook_selftest.sh  # hooks, offline
-shellcheck -S warning skills/controlling-tebim-prestashop/{scripts/psctl,hooks/*.sh,tests/*.sh}
+shellcheck -S warning skills/controlling-tebim-prestashop/{scripts/psctl,tests/*.sh}
 ```
 
 CI runs the same checks on Linux and macOS. See [CONTRIBUTING.md](CONTRIBUTING.md).

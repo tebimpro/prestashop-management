@@ -14,10 +14,13 @@ First public release.
 - `PSCTL_DRY_RUN=1` preview mode for batch changes.
 - Plugin `userConfig` for shop URL and a sensitive Webservice key.
 - Slash commands `/tebim-prestashop-connect` and `/tebim-control-prestashop`.
-- SessionStart/Stop hooks offering to save reusable notes after long sessions.
+- Skill offers to save a reusable note/script under `.psctl/notes/` after long sessions (10+ mutations).
 - `marketplace.json` so the repository can be added as a Claude Code marketplace.
 - CI (shellcheck + offline self-tests on Linux and macOS).
 
+### Changed
+- No plugin hooks: the plugin ships only a skill and slash commands (no commands run automatically on the user's machine).
+
 ### Fixed
 - `urlencode` now encodes UTF-8 correctly (e.g. Polish characters in filter values).
-- Documentation: correct hooks manifest path; `raw` usage with query parameters.
+- Documentation: `raw` usage with query parameters.

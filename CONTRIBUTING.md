@@ -14,8 +14,7 @@ Thanks for helping improve PrestaShop Management for AI Agents!
 
 ```bash
 bash skills/controlling-tebim-prestashop/tests/selftest.sh
-bash skills/controlling-tebim-prestashop/tests/hook_selftest.sh
-shellcheck -S warning skills/controlling-tebim-prestashop/{scripts/psctl,hooks/*.sh,tests/*.sh}
+shellcheck -S warning skills/controlling-tebim-prestashop/{scripts/psctl,tests/*.sh}
 ```
 
 Add a self-test for any new pure logic in `psctl`, and an entry under *Unreleased* in [CHANGELOG.md](CHANGELOG.md).
