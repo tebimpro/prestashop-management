@@ -11,8 +11,8 @@ Plugin + skill od [Tebim](https://tebim.pro), dzięki któremu Claude (i inni ag
 - **Najpierw dry-run** — każda zmiana masowa to skrypt do przejrzenia, uruchamiany najpierw z `PSCTL_DRY_RUN=1`.
 - **Log audytu** — każdy `POST` / `PUT` / `DELETE` trafia do `./.psctl/audit.log`.
 - **Rollback** — przed każdym `PUT` / `DELETE` zapisywany jest snapshot rekordu (XML).
-- **Least privilege** — prowadzenie krok po kroku przy tworzeniu klucza Webservice; klucz nigdy nie jest wypisywany.
-- **Zero zależności** — bash + `curl` (opcjonalnie `xmllint`). macOS i Linux.
+- **Least privilege** — prowadzenie krok po kroku przy tworzeniu klucza Webservice; klucz nigdy nie jest wypisywany ani podawany w linii poleceń (siedzi w configu curla z `chmod 600`).
+- **Nic do instalowania** — plugin to wyłącznie Markdown + JSON; agentowi wystarczy `bash` + `curl` (opcjonalnie `xmllint`). macOS i Linux.
 
 Obsługuje PrestaShop **1.7, 8.x i 9.x** (legacy Webservice API).
 
@@ -40,7 +40,7 @@ Po prostu poproś agenta, np.:
 | `/tebim-prestashop-connect [adres-sklepu]` | Onboarding: połączenie, weryfikacja klucza, lista dostępnych zasobów |
 | `/tebim-control-prestashop <zadanie>` | Realizacja zadania w sklepie zgodnie z regułami bezpieczeństwa skilla |
 
-Szczegóły (`psctl`, API, tworzenie klucza, polityki batch/rollback) — w [README.md](README.md) i katalogu `references/`.
+Szczegóły (wywołania API przez `ps_req`/`ps_mut`, tworzenie klucza, polityki batch/rollback) — w [README.md](README.md) i katalogu `skills/controlling-tebim-prestashop/references/`.
 
 ## Bezpieczeństwo
 

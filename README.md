@@ -10,13 +10,13 @@ A plugin + skill by [Tebim](https://tebim.pro) that lets Claude (and other skill
 
 ## Why
 
-Clicking through the back office for bulk work is slow and error-prone. Letting an agent loose on a live store is scary. This plugin gives the agent a small, auditable CLI (`psctl`) and strict operating rules:
+Clicking through the back office for bulk work is slow and error-prone. Letting an agent loose on a live store is scary. This plugin teaches the agent a small, auditable way of calling the API (`curl` + two helpers, `ps_req` and `ps_mut`) and strict operating rules:
 
 - **Dry-run first** — every batch change is a reviewable script, previewed with `PSCTL_DRY_RUN=1` before anything is sent.
 - **Audit log** — every `POST` / `PUT` / `DELETE` is logged to `./.psctl/audit.log`.
 - **Rollback** — before each `PUT` / `DELETE` the previous record is snapshotted as XML; restoring it is one command.
-- **Least privilege** — guided Webservice key creation with only the permissions you need. The key is never printed.
-- **Zero dependencies** — pure bash + `curl` (optional `xmllint`). macOS (bash 3.2) and Linux.
+- **Least privilege** — guided Webservice key creation with only the permissions you need. The key is never printed and never put on a command line (it lives in a `chmod 600` curl config).
+- **Nothing to install** — the plugin is pure Markdown + JSON; the agent only needs `bash` + `curl` (optional `xmllint`). macOS and Linux.
 
 Works with PrestaShop **1.7, 8.x and 9.x** (legacy Webservice API).
 
@@ -40,17 +40,11 @@ Then run `/tebim-prestashop-connect` to verify the connection and the key's perm
 
 ### Other agents (skill only)
 
-The skill in [`skills/controlling-tebim-prestashop/`](skills/controlling-tebim-prestashop/) follows the Agent Skills format (`SKILL.md` + scripts + references). Copy that folder into your agent's skills directory and provide credentials as environment variables:
+The skill in [`skills/controlling-tebim-prestashop/`](skills/controlling-tebim-prestashop/) follows the Agent Skills format (`SKILL.md` + references, Markdown only). Copy that folder into your agent's skills directory and provide credentials as environment variables:
 
 ```bash
 export PRESTASHOP_URL=https://shop.example.com
 export PRESTASHOP_TOKEN=YOUR_WEBSERVICE_KEY
-```
-
-### Standalone CLI
-
-```bash
-skills/controlling-tebim-prestashop/scripts/psctl ping
 ```
 
 ## Usage
@@ -70,19 +64,19 @@ Slash commands:
 
 > The bundled commands currently talk to the user in **Polish**. The skill itself is language-neutral and answers in the user's language.
 
-### `psctl` quick reference
+### How the agent calls the API
+
+The skill's [`references/api-calls.md`](skills/controlling-tebim-prestashop/references/api-calls.md) defines a one-time session setup and two shell helpers the agent pastes inline:
 
 ```bash
-psctl ping                                     # verify auth + reachability
-psctl resources                                # resources your key can access
-psctl get products 'filter[active]=1' 'display=[id,reference,price]' 'sort=[price_DESC]' limit=10
-psctl get orders 42                            # one record
-psctl schema products blank > product.xml      # XML template for writes
-psctl create products -f product.xml           # POST
-psctl update products 42 -f product.xml        # PUT (snapshot taken first)
-psctl delete products 42                       # DELETE (snapshot taken first)
-psctl audit 50                                 # last 50 mutations
-PSCTL_DRY_RUN=1 bash change.sh                 # preview a batch, send nothing
+ps_req GET "" >/dev/null && echo OK            # verify auth + reachability
+ps_req GET products -G --data-urlencode 'filter[active]=1' \
+  --data-urlencode 'display=[id,reference,price]' --data-urlencode limit=10
+ps_req GET orders/42                           # one record
+ps_mut PUT products/42 .psctl/work/p42.xml     # PUT (snapshot + audit line first)
+ps_mut DELETE products/42                      # DELETE (snapshot + audit line first)
+tail -n 50 .psctl/audit.log                    # last 50 mutations
+PSCTL_DRY_RUN=1 bash .psctl/work/change.sh     # preview a batch, send nothing
 ```
 
 Full API notes: [`references/webservice-api.md`](skills/controlling-tebim-prestashop/references/webservice-api.md) · Key setup: [`references/token-setup.md`](skills/controlling-tebim-prestashop/references/token-setup.md) · Batch/rollback/reporting: [`references/operating-policies.md`](skills/controlling-tebim-prestashop/references/operating-policies.md)
@@ -95,8 +89,6 @@ Full API notes: [`references/webservice-api.md`](skills/controlling-tebim-presta
 4. Tick **only** the resources/methods you need (read-only = `GET` only).
 5. Save and paste the key into the plugin config.
 
-`psctl token-help` prints these steps with your shop URL filled in.
-
 ## Repository layout
 
 ```text
@@ -106,20 +98,23 @@ Full API notes: [`references/webservice-api.md`](skills/controlling-tebim-presta
 commands/                # /tebim-prestashop-connect, /tebim-control-prestashop
 skills/controlling-tebim-prestashop/
   SKILL.md
-  scripts/psctl          # the CLI
-  references/            # API, key setup, operating policies
-  assets/                # HTML report template
-  tests/                 # offline self-tests
+  references/
+    api-calls.md         # setup + ps_req/ps_mut helpers + every operation
+    webservice-api.md    # API syntax: filters, display, XML format, errors
+    token-setup.md       # creating & scoping a Webservice key
+    operating-policies.md# batch, dry-run, audit, rollback, reports
+    report-template.md   # HTML report template (Claude Desktop)
 ```
+
+The plugin contains only Markdown and JSON — no scripts, binaries or hooks.
 
 ## Development
 
 ```bash
-bash skills/controlling-tebim-prestashop/tests/selftest.sh       # psctl logic, offline
-shellcheck -S warning skills/controlling-tebim-prestashop/{scripts/psctl,tests/*.sh}
+claude plugin validate .
 ```
 
-CI runs the same checks on Linux and macOS. See [CONTRIBUTING.md](CONTRIBUTING.md).
+CI validates the JSON manifests and checks that the repo holds only allowed file types. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Security
 

@@ -5,19 +5,19 @@ Thanks for helping improve PrestaShop Management for AI Agents!
 
 ## Ground rules
 
-- **Keep `psctl` dependency-free**: bash + `curl` only (`xmllint` optional). It must run on macOS's bash 3.2 — no associative arrays, `mapfile`, `${var,,}` etc.
-- **Never weaken the safety model**: audit log, snapshots before `PUT`/`DELETE`, dry-run and token masking stay on by default.
+- **Markdown and JSON only.** The plugin ships no scripts, binaries, hooks or HTML — the agent runs the documented `curl` snippets itself. Don't add files that start with `#!`, package-manager files, or images other than the plugin icon (PNG).
+- **Keep snippets portable**: bash 3.2 (macOS default) + `curl` only (`xmllint` optional) — no associative arrays, `mapfile`, `${var,,}`, GNU-only `sed -i` (use `sed -i.bak`).
+- **Never weaken the safety model**: every mutation via `ps_mut` (audit log, snapshot before `PUT`/`DELETE`, dry-run), key only in `.psctl/curlrc`, never printed.
 - **No secrets or store data** in issues, PRs or test fixtures.
 - New files carry the header `© Tebim sp. z o.o. | tebim.pro`.
 
 ## Before opening a PR
 
 ```bash
-bash skills/controlling-tebim-prestashop/tests/selftest.sh
-shellcheck -S warning skills/controlling-tebim-prestashop/{scripts/psctl,tests/*.sh}
+claude plugin validate .
 ```
 
-Add a self-test for any new pure logic in `psctl`, and an entry under *Unreleased* in [CHANGELOG.md](CHANGELOG.md).
+If you change the helpers in `references/api-calls.md`, test them against a real (staging) shop or a local mock: read, `PUT` + snapshot, `DELETE`, dry-run, a failing request. Add an entry under *Unreleased* in [CHANGELOG.md](CHANGELOG.md).
 
 ## Releasing (maintainers)
 
