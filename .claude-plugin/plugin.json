@@ -1,5 +1,6 @@
 {
   "name": "tebim-prestashop-connector",
+  "icon": "./logo_tebim_kwadrat.png",
   "description": "Control a PrestaShop store from your AI agent via the Webservice API — CRUD, batch changes, audit log and rollback.",
   "version": "0.4.0",
   "author": {
